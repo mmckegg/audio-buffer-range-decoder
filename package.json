@@ -1,0 +1,33 @@
+{
+  "name": "audio-buffer-range-decoder",
+  "version": "0.0.0",
+  "description": "Decode specified ranges of wave file on disk to AudioBuffers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard",
+    "example": "electron-spawn example.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/livejs/random-access-audio-buffer"
+  },
+  "keywords": [
+    "AudioBuffer",
+    "decodeAudioData",
+    "range",
+    "random",
+    "access",
+    "waapi"
+  ],
+  "author": "Matt McKegg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/livejs/random-access-audio-buffer/issues"
+  },
+  "homepage": "https://github.com/livejs/random-access-audio-buffer",
+  "devDependencies": {
+    "electron-prebuilt": "^0.30.3",
+    "electron-spawn": "^3.0.0",
+    "standard": "^5.0.2"
+  }
+}
