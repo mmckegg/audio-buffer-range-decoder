@@ -8,19 +8,19 @@ module.exports = function getMeta (descriptor, fs, cb) {
   var stats = null
 
   fs.fstat(descriptor, function (err, res) {
-    if (err) return cb&&cb(err)
+    if (err) return cb && cb(err)
     stats = res
 
     read(descriptor, fs, 0, 12, function (err, buffer) {
-      if (err) return cb&&cb(err)
+      if (err) return cb && cb(err)
       header = buffer
       nextChunk(12)
     })
   })
 
-  function nextChunk(start) {
+  function nextChunk (start) {
     read(descriptor, fs, start, 8, function (err, buffer) {
-      if (err) return cb&&cb(err)
+      if (err) return cb && cb(err)
 
       var name = buffer.slice(0, 4).toString('ascii').trim()
       var length = buffer.readUInt32LE(4)
@@ -40,9 +40,9 @@ module.exports = function getMeta (descriptor, fs, cb) {
     })
   }
 
-  function done() {
+  function done () {
     getFormat(descriptor, fs, chunks.fmt[0], function (err, format) {
-      if (err) return cb&&cb(err)
+      if (err) return cb && cb(err)
       cb(null, {
         header: header,
         format: format,
@@ -53,9 +53,9 @@ module.exports = function getMeta (descriptor, fs, cb) {
   }
 }
 
-function getFormat(fd, fs, offset, cb) {
+function getFormat (fd, fs, offset, cb) {
   read(fd, fs, offset, 16, function (err, buffer) {
-    if (err) return cb&&cb(err)
+    if (err) return cb && cb(err)
     cb(null, {
       format: buffer.readUInt16LE(0),
       channels: buffer.readUInt16LE(2),
@@ -67,7 +67,7 @@ function getFormat(fd, fs, offset, cb) {
   })
 }
 
-function read(fd, fs, start, length, cb) {
+function read (fd, fs, start, length, cb) {
   var result = new Buffer(length)
   fs.read(fd, result, 0, length, start, function (err) {
     cb(err, result)

@@ -18,12 +18,12 @@ get(1000, 4, function (err, audioBuffer) {
 
   setTimeout(function () {
     get(1004, 4, function (err, audioBuffer) {
-      play(startTime+4, audioBuffer)
+      play(startTime + 4, audioBuffer)
     })
   }, 3800)
 })
 
-function play(at, audioBuffer) {
+function play (at, audioBuffer) {
   console.log('playing audio at', at)
   var player = audioContext.createBufferSource()
   player.buffer = audioBuffer

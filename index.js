@@ -9,7 +9,7 @@ function AudioBufferRangeDecoder (filePath, options) {
   var fs = options.fs
   var lastOpenError = null
 
-  var file = fs.open(filePath, 'r', function (err, res) {
+  fs.open(filePath, 'r', function (err, res) {
     if (err) return openError(err)
     fd = res
     getMeta(fd, fs, function (err, value) {
@@ -60,7 +60,7 @@ function AudioBufferRangeDecoder (filePath, options) {
     var buffer = getBufferWithHeader(meta, offset[1])
 
     fs.read(fd, buffer, 44, offset[1], offset[0], function (err) {
-      if (err) return cb&&cb(err)
+      if (err) return cb && cb(err)
       var arrayBuffer = new Uint8Array(buffer).buffer
       options.audio.decodeAudioData(arrayBuffer, function (audioBuffer) {
         cb(null, audioBuffer)
@@ -71,7 +71,7 @@ function AudioBufferRangeDecoder (filePath, options) {
   }
 }
 
-function getOffset(meta, startTime, duration) {
+function getOffset (meta, startTime, duration) {
   var fmt = meta.format
   var dataStart = meta.chunks.data[0]
   var startOffset = dataStart + align(fmt.byteRate * startTime, fmt.blockAlign)
@@ -79,12 +79,12 @@ function getOffset(meta, startTime, duration) {
   return [startOffset, length]
 }
 
-function align(value, block) {
+function align (value, block) {
   return Math.floor(value / block) * block
 }
 
 function getBufferWithHeader (meta, length) {
-  var buffer = new Buffer(44+length)
+  var buffer = new Buffer(44 + length)
   var format = meta.format
 
   buffer.write('RIFF', 0, 'ascii')
