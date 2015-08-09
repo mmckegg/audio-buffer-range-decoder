@@ -13,11 +13,13 @@ Useful for streaming large audio files from disk when you don't want to load the
 var RangeDecoder = require('audio-buffer-range-decoder')
 ```
 
-### `var decodeRange = RangeDecoder(filePath, options)`
+### `var decodeRange = RangeDecoder(filePath, options, onLoad)`
 
 Specify `filePath` on disk. Opens the file ready for access. 
 
-Returns a decode function.
+`onLoad(err, meta)` is called when meta data has loaded.
+
+Returns a `decodeRange` function.
 
 *Options:*
  - `fs`: pass in [fs](https://nodejs.org/api/fs.html) implementation (required)

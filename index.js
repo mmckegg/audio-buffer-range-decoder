@@ -2,24 +2,12 @@ var getMeta = require('./meta')
 
 module.exports = AudioBufferRangeDecoder
 
-function AudioBufferRangeDecoder (filePath, options) {
+function AudioBufferRangeDecoder (filePath, options, onLoad) {
   var queue = []
   var meta = null
   var fd = null
   var fs = options.fs
   var lastOpenError = null
-
-  fs.open(filePath, 'r', function (err, res) {
-    if (err) return openError(err)
-    fd = res
-    getMeta(fd, fs, function (err, value) {
-      if (err) return openError(err)
-      meta = value
-      while (queue.length) {
-        get.apply(this, queue.shift())
-      }
-    })
-  })
 
   var decode = function (startTime, duration, cb) {
     if (typeof cb !== 'function') {
@@ -32,6 +20,19 @@ function AudioBufferRangeDecoder (filePath, options) {
       get(startTime, duration, cb)
     }
   }
+
+  fs.open(filePath, 'r', function (err, res) {
+    if (err) return openError(err)
+    fd = res
+    getMeta(fd, fs, function (err, value) {
+      if (err) return openError(err)
+      meta = value
+      onLoad && onLoad(null, meta)
+      while (queue.length) {
+        get.apply(this, queue.shift())
+      }
+    })
+  })
 
   decode.close = function () {
     if (fd != null) {
@@ -46,6 +47,8 @@ function AudioBufferRangeDecoder (filePath, options) {
 
   function openError (err) {
     lastOpenError = err
+    onLoad && onLoad(err)
+
     while (queue.length) {
       get.apply(this, queue.shift())
     }

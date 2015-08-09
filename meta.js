@@ -47,7 +47,8 @@ module.exports = function getMeta (descriptor, fs, cb) {
         header: header,
         format: format,
         chunks: chunks,
-        size: stats.size
+        size: stats.size,
+        duration: chunks.data[1] * format.byteRate
       })
     })
   }
