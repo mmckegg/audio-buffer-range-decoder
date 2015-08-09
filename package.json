@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/livejs/random-access-audio-buffer"
+    "url": "https://github.com/livejs/audio-buffer-range-decoder.git"
   },
   "keywords": [
     "AudioBuffer",
