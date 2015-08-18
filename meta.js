@@ -23,11 +23,8 @@ module.exports = function getMeta (descriptor, fs, cb) {
       if (err) return cb && cb(err)
 
       var name = buffer.slice(0, 4).toString('ascii').trim()
-      var length = buffer.readUInt32LE(4)
-
-      if (!length) {
-        length = stats.size - start - 8
-      }
+      var maxLength = stats.size - (start + 8)
+      var length = Math.min(buffer.readUInt32LE(4) || maxLength, maxLength)
 
       chunks[name] = [start + 8, length]
 
@@ -48,7 +45,7 @@ module.exports = function getMeta (descriptor, fs, cb) {
         format: format,
         chunks: chunks,
         size: stats.size,
-        duration: chunks.data[1] * format.byteRate
+        duration: chunks.data[1] / format.byteRate
       })
     })
   }
