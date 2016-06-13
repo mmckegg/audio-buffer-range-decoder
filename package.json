@@ -26,8 +26,11 @@
   },
   "homepage": "https://github.com/livejs/random-access-audio-buffer",
   "devDependencies": {
-    "electron-prebuilt": "^0.30.3",
+    "electron-prebuilt": "^0.37.6",
     "electron-spawn": "^3.0.0",
     "standard": "^5.0.2"
+  },
+  "dependencies": {
+    "audiobuffer-slice": "0.0.4"
   }
 }

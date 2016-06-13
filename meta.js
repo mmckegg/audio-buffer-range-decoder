@@ -1,3 +1,5 @@
+var parseWebm = require('./lib/parse-webm')
+
 module.exports = function getMeta (descriptor, fs, cb) {
   // read first 12 bytes
   // chunks from now on. 4 byte identifier ASCII, 4 byte size UInt32LE
@@ -14,7 +16,11 @@ module.exports = function getMeta (descriptor, fs, cb) {
     read(descriptor, fs, 0, 12, function (err, buffer) {
       if (err) return cb && cb(err)
       header = buffer
-      nextChunk(12)
+      if (isWav(header)) {
+        nextChunk(12)
+      } else if (isWebm(header)) {
+        parseWebm(descriptor, fs, cb)
+      }
     })
   })
 
@@ -70,4 +76,16 @@ function read (fd, fs, start, length, cb) {
   fs.read(fd, result, 0, length, start, function (err) {
     cb(err, result)
   })
+}
+
+function isWebm (buf) {
+  if (!buf || buf.length < 4) {
+    return false
+  }
+
+  return buf[0] === 26 && buf[1] === 69 && buf[2] === 223 && buf[3] === 163
+}
+
+function isWav (buf) {
+  return buf.slice(0, 4).toString() === 'RIFF'
 }
