@@ -1,4 +1,11 @@
 var getMeta = require('./meta')
+var execFile = require('child_process').execFile
+
+// special build of ffmpeg that only supports opus decoding, and pcm_f32le encoding
+var ffmpeg = __dirname + '/bin/ffmpeg-' + process.platform
+if (process.platform === 'win32') {
+  ffmpeg += '.exe'
+}
 
 module.exports = AudioBufferRangeDecoder
 
@@ -59,18 +66,22 @@ function AudioBufferRangeDecoder (filePath, options, onLoad) {
       return cb(lastOpenError)
     }
 
-    var offset = getOffset(meta, startTime, duration)
-    var buffer = getBufferWithHeader(meta, offset[1])
+    if (meta.type === 'webm') {
+      handleWebm(meta, filePath, options, startTime, duration, cb)
+    } else {
+      var offset = getOffset(meta, startTime, duration)
+      var buffer = getBufferWithHeader(meta.format, offset[1])
 
-    fs.read(fd, buffer, 44, offset[1], offset[0], function (err) {
-      if (err) return cb && cb(err)
-      var arrayBuffer = new Uint8Array(buffer).buffer
-      options.audio.decodeAudioData(arrayBuffer, function (audioBuffer) {
-        cb(null, audioBuffer)
-      }, function (err) {
-        cb(err || new Error('Decode error'))
+      fs.read(fd, buffer, 44, offset[1], offset[0], function (err) {
+        if (err) return cb && cb(err)
+        var arrayBuffer = new Uint8Array(buffer).buffer
+        options.audio.decodeAudioData(arrayBuffer, function (audioBuffer) {
+          cb(null, audioBuffer)
+        }, function (err) {
+          cb(err || new Error('Decode error'))
+        })
       })
-    })
+    }
   }
 }
 
@@ -86,9 +97,8 @@ function align (value, block) {
   return Math.floor(value / block) * block
 }
 
-function getBufferWithHeader (meta, length) {
+function getBufferWithHeader (format, length) {
   var buffer = new Buffer(44 + length)
-  var format = meta.format
 
   buffer.write('RIFF', 0, 'ascii')
   buffer.writeUInt32LE(44 + length, 4)
@@ -109,4 +119,28 @@ function getBufferWithHeader (meta, length) {
   buffer.writeUInt32LE(length, 40)
 
   return buffer
+}
+
+function handleWebm (meta, path, options, startTime, duration, cb) {
+  console.log(meta.cues)
+  execFile(ffmpeg, [
+    '-i', path,
+    '-ss', startTime,
+    '-t', duration,
+    '-acodec', 'pcm_f32le',
+    '-f', 'wav',
+    '-'
+  ], {
+    maxBuffer: 10 * 1024 * 1024,
+    encoding: 'buffer'
+  }, function (err, buffer, stderr) {
+    if (err) return cb(err)
+    console.log('duration: ' + duration + ' startTime: ' + startTime)
+    var arrayBuffer = new Uint8Array(buffer).buffer
+    options.audio.decodeAudioData(arrayBuffer, function (audioBuffer) {
+      cb(null, audioBuffer)
+    }, function (err) {
+      cb(err || new Error('Decode error'))
+    })
+  })
 }
