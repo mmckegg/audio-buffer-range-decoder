@@ -1,7 +1,7 @@
 {
   "name": "audio-buffer-range-decoder",
   "version": "1.1.1",
-  "description": "Decode specified ranges of wave file on disk to AudioBuffers.",
+  "description": "Decode specified ranges of PCM Wave and Opus webm files on disk to AudioBuffers. Probably only works with electron.",
   "main": "index.js",
   "scripts": {
     "test": "standard",
@@ -17,7 +17,10 @@
     "range",
     "random",
     "access",
-    "waapi"
+    "waapi",
+    "electron",
+    "opus",
+    "webm"
   ],
   "author": "Matt McKegg",
   "license": "MIT",
@@ -31,6 +34,6 @@
     "standard": "^5.0.2"
   },
   "dependencies": {
-    "audiobuffer-slice": "0.0.4"
+    "ebml": "^2.2.0"
   }
 }
