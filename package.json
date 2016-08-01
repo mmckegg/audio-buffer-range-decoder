@@ -1,6 +1,6 @@
 {
   "name": "audio-buffer-range-decoder",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Decode specified ranges of PCM Wave and Opus webm files on disk to AudioBuffers. Probably only works with electron.",
   "main": "index.js",
   "scripts": {
