@@ -122,7 +122,6 @@ function getBufferWithHeader (format, length) {
 }
 
 function handleWebm (meta, path, options, startTime, duration, cb) {
-  console.log(meta.cues)
   execFile(ffmpeg, [
     '-i', path,
     '-ss', startTime,
@@ -135,7 +134,6 @@ function handleWebm (meta, path, options, startTime, duration, cb) {
     encoding: 'buffer'
   }, function (err, buffer, stderr) {
     if (err) return cb(err)
-    console.log('duration: ' + duration + ' startTime: ' + startTime)
     var arrayBuffer = new Uint8Array(buffer).buffer
     options.audio.decodeAudioData(arrayBuffer, function (audioBuffer) {
       cb(null, audioBuffer)
